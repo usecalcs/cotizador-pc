@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="pc.png">
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cotizador de PC usada. Descubrí al instante cuánto vale tu computadora de escritorio o notebook en el mercado actual.">
+    <title>Cotizador de PC Usada | UseCalcs</title>
+    
+    <style>
+        :root { --primary: #3182ce; --dark: #1a365d; --bg: #f0f4f8; --border: #cbd5e0; --success: #38a169; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; color: #2d3748; }
+        
+        .app-container { background: white; padding: 35px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 600px; width: 100%; margin-top: 10px; }
+        
+        .header-text { text-align: center; margin-bottom: 30px; }
+        h2 { color: var(--dark); margin: 0 0 8px 0; font-weight: 800; font-size: 28px; }
+        p.subtitle { color: #718096; margin: 0; font-size: 15px; line-height: 1.5; }
+        
+        /* Formulario */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #4a5568; }
+        .form-group select { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border); font-size: 15px; outline: none; background-color: #fff; cursor: pointer; transition: 0.2s; appearance: none; }
+        .form-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1); }
+        
+        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 10px; box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2); }
+        button:hover { background: #2b6cb0; transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+
+        /* Tarjeta de Resultado */
+        .result-card { display: none; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 12px; padding: 25px; margin-top: 30px; text-align: center; animation: fadeIn 0.5s ease; }
+        .result-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; font-weight: bold; margin-bottom: 10px; }
+        .price-ars { font-size: 36px; font-weight: 900; color: var(--dark); margin: 0; line-height: 1.2; }
+        .price-usd { font-size: 16px; color: #718096; font-weight: 600; margin-top: 5px; }
+        .disclaimer { font-size: 12px; color: #a0aec0; margin-top: 15px; font-style: italic; }
+        
+        .loading-text { font-size: 14px; color: #718096; font-weight: 600; margin-top: 15px; display: none; text-align: center; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        footer { margin-top: 40px; text-align: center; font-size: 14px; color: #718096; width: 100%; max-width: 850px; border-top: 1px solid var(--border); padding-top: 20px; padding-bottom: 40px; }
+        footer a { color: var(--primary); text-decoration: none; font-weight: bold; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header-text">
+        <h2>Cotizador de PC 💻</h2>
+        <p class="subtitle">Seleccioná los componentes de tu equipo para conocer su valor estimado de venta en el mercado actual.</p>
+    </div>
+    
+    <div class="form-group">
+        <label>Procesador (CPU)</label>
+        <select id="cpu">
+            <option value="0">Seleccioná una opción...</option>
+            <option value="20">Gama Baja (Celeron, Pentium, Athlon)</option>
+            <option value="50">Gama Media Antigua (i3/i5 o Ryzen 3/5 de hace +4 años)</option>
+            <option value="100">Gama Media Moderna (i3/i5 o Ryzen 3/5 actuales)</option>
+            <option value="160">Gama Alta Antigua (i7/i9 o Ryzen 7/9 de hace +4 años)</option>
+            <option value="250">Gama Alta Moderna (i7/i9 o Ryzen 7/9 actuales)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Memoria RAM</label>
+        <select id="ram">
+            <option value="0">Seleccioná una opción...</option>
+            <option value="10">4 GB (DDR3 o DDR4)</option>
+            <option value="20">8 GB</option>
+            <option value="40">16 GB</option>
+            <option value="75">32 GB o más</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Almacenamiento (Discos)</label>
+        <select id="storage">
+            <option value="0">Seleccioná una opción...</option>
+            <option value="10">Solo Disco Rígido (HDD)</option>
+            <option value="20">SSD Básico (120GB - 240GB)</option>
+            <option value="35">SSD Estándar (480GB - 512GB)</option>
+            <option value="55">SSD / NVMe Alta Capacidad (1TB o más)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Placa de Video (GPU)</label>
+        <select id="gpu">
+            <option value="0">Integrada (Viene con el procesador)</option>
+            <option value="60">Dedicada de Entrada (ej: GTX 1050, RX 550)</option>
+            <option value="150">Dedicada Media (ej: GTX 1660, RTX 3050, RX 6600)</option>
+            <option value="300">Dedicada Alta (ej: RTX 3070/4060 o superior)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Estado General del Equipo</label>
+        <select id="condition">
+            <option value="1.0">Excelente (Como nueva, sin detalles)</option>
+            <option value="0.85">Bueno (Marcas de uso normales, funciona perfecto)</option>
+            <option value="0.60">Regular (Detalles estéticos graves o algún puerto no anda)</option>
+        </select>
+    </div>
+
+    <button onclick="calcularCotizacion()" id="btn-cotizar">Calcular Valor</button>
+    <div class="loading-text" id="loading">Conectando con cotización del dólar actual... ⏳</div>
+
+    <div class="result-card" id="result-card">
+        <div class="result-title">Valor Estimado de Venta</div>
+        <p class="price-ars" id="price-ars">$0</p>
+        <p class="price-usd" id="price-usd">USD $0</p>
+        <p class="disclaimer">Cotización basada en el valor del Dólar Blue del día. El precio puede variar según la urgencia de venta y la marca de los componentes.</p>
+    </div>
+</div>
+
+<footer>
+    <p style="margin-bottom: 10px;"><b>UseCalcs</b> - Herramientas para Estudiantes y Freelancers</p>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <a href="https://usecalcs.github.io/generador-horarios/">Generador de Horarios</a>
+        <span style="color: #cbd5e0;">|</span>
+        <a href="https://usecalcs.github.io/calculadora-matrices/">Calculadora de Álgebra</a>
+        <span style="color: #cbd5e0;">|</span>
+        <a href="https://getchatlink.github.io/">GetChatLink</a>
+    </div>
+    <p style="font-size: 11px; margin-top: 15px; opacity: 0.6;">Desarrollado por Dante</p>
+</footer>
+
+<script>
+    async function calcularCotizacion() {
+        // 1. Obtener valores de los selectores
+        let cpu = parseInt(document.getElementById('cpu').value);
+        let ram = parseInt(document.getElementById('ram').value);
+        let storage = parseInt(document.getElementById('storage').value);
+        let gpu = parseInt(document.getElementById('gpu').value);
+        let condition = parseFloat(document.getElementById('condition').value);
+
+        // Validar que haya elegido al menos lo básico
+        if (cpu === 0 || ram === 0 || storage === 0) {
+            alert("Por favor, completá al menos el Procesador, la RAM y el Almacenamiento para darte una cotización.");
+            return;
+        }
+
+        // 2. Sumar componentes (Precio base del gabinete + fuente + mother = 40 USD por defecto)
+        let basePrecioGabinete = 40;
+        let totalUSD = (basePrecioGabinete + cpu + ram + storage + gpu) * condition;
+        
+        // Redondear a un número entero
+        totalUSD = Math.round(totalUSD);
+
+        // Mostrar UI de carga
+        document.getElementById('btn-cotizar').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('result-card').style.display = 'none';
+
+        try {
+            // 3. Conectar a la API gratuita de Dólar (DolarApi Argentina)
+            const respuesta = await fetch('https://dolarapi.com/v1/dolares/blue');
+            const datos = await respuesta.json();
+            
+            // Usamos el precio de compra del Blue (es lo que le pagarían en mano a la persona si vende los dólares)
+            let precioDolarBlue = datos.compra; 
+            let totalARS = totalUSD * precioDolarBlue;
+
+            // 4. Formatear números para que se vean lindos (ej: $ 150.000)
+            let formateador = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+            
+            document.getElementById('price-ars').innerText = formateador.format(totalARS);
+            document.getElementById('price-usd').innerText = "Aprox. USD $" + totalUSD;
+
+            // Mostrar Resultados
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('btn-cotizar').style.display = 'block';
+            document.getElementById('result-card').style.display = 'block';
+
+        } catch (error) {
+            alert("Hubo un error al obtener la cotización del dólar actual. Por favor, intentá nuevamente en unos minutos.");
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('btn-cotizar').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
