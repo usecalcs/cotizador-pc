@@ -221,7 +221,7 @@
             // Llamada en paralelo para mayor velocidad
             const [resBlue, resMep] = await Promise.all([
                 fetch('https://dolarapi.com/v1/dolares/blue'),
-                fetch('https://dolarapi.com/v1/dolares/mep')
+                fetch('https://dolarapi.com/v1/dolares/bolsa')
             ]);
             
             const dataBlue = await resBlue.json();
