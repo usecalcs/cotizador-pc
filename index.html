@@ -207,11 +207,11 @@
         nuevaFila.className = 'storage-row';
         nuevaFila.innerHTML = `
             <select class="storage-select">
-                <option value="0">Seleccioná disco secundario...</option>
-                <option value="10">Disco Rígido (HDD)</option>
-                <option value="20">SSD Básico</option>
-                <option value="35">SSD Estándar</option>
-                <option value="55">SSD / NVMe 1TB+</option>
+                <option value="0">No cotizar / No tengo</option>
+                <option value="10">Solo Disco Rígido (HDD)</option>
+                <option value="20">SSD Básico (120GB - 240GB)</option>
+                <option value="35">SSD Estándar (480GB - 512GB)</option>
+                <option value="55">SSD / NVMe Alta Capacidad (1TB o más)</option>
             </select>
             <button class="btn-remove" onclick="this.parentElement.remove()" title="Eliminar disco">X</button>
         `;
