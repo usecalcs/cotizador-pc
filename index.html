@@ -256,9 +256,9 @@
             const dataMep = await resMep.json();
             const dataOficial = await resOficial.json();
 
-            let blue = dataBlue.compra;
-            let mep = dataMep.compra;
-            let oficial = dataOficial.compra;
+            let blue = dataBlue.venta;
+            let mep = dataMep.venta;
+            let oficial = dataOficial.venta;
             
             // Calculamos el precio total en Pesos basado en el Dólar Blue (referencia de hardware usado)
             let totalARS = totalUSD * blue;
