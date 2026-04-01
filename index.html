@@ -14,7 +14,7 @@
     <meta name="google-site-verification" content="olKjGOsQmEBzTxB7t8u_hlj72BlCWJwSuMb0OMQNVes" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cotizador de PC usada y componentes. Descubrí al instante cuánto vale tu hardware con Dólar Blue y MEP en tiempo real.">
+    <meta name="description" content="Cotizador de PC usada y componentes. Descubrí al instante cuánto vale tu hardware con Dólar Blue, MEP y Oficial en tiempo real.">
     <title>Cotizador de PC Usada | UseCalcs</title>
     
     <style>
@@ -50,9 +50,11 @@
         .result-card { display: none; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 12px; padding: 25px; margin-top: 30px; text-align: center; animation: fadeIn 0.5s ease; }
         .result-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; font-weight: bold; margin-bottom: 15px; }
         
-        .dolar-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        /* Contenedor de Dólares */
+        .dolar-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .dolar-badge { display: inline-block; background: #c3e6cb; color: #276749; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; }
         .dolar-badge.mep { background: #bee3f8; color: #2c5282; }
+        .dolar-badge.oficial { background: #e2e8f0; color: #4a5568; }
 
         .price-ars { font-size: 36px; font-weight: 900; color: var(--dark); margin: 0; line-height: 1.2; }
         .price-usd { font-size: 16px; color: #718096; font-weight: 600; margin-top: 5px; }
@@ -158,8 +160,9 @@
     <div class="result-card" id="result-card">
         <div class="result-title">Valor Sugerido de Venta</div>
         <div class="dolar-container">
-            <div class="dolar-badge" id="badge-blue">Dólar Blue: $0</div>
-            <div class="dolar-badge mep" id="badge-mep">Dólar MEP: $0</div>
+            <div class="dolar-badge oficial" id="badge-oficial">Oficial: $0</div>
+            <div class="dolar-badge mep" id="badge-mep">MEP: $0</div>
+            <div class="dolar-badge" id="badge-blue">Blue: $0</div>
         </div>
         <p class="price-ars" id="price-ars">$0</p>
         <p class="price-usd" id="price-usd">USD $0</p>
@@ -170,14 +173,14 @@
                 </div>
         </div>
 
-        <p class="disclaimer">Valor referencial basado en Dólar Blue.</p>
+        <p class="disclaimer">Valor final en ARS calculado en base a Dólar Blue (Referencia de mercado).</p>
     </div>
 
     <div class="info-section">
         <h3>Transparencia de Datos</h3>
         <p>Usamos un sistema multivariable para garantizar precios reales:</p>
         <ul>
-            <li><strong>Cotización Dual:</strong> Referencia Blue (Marketplace) y MEP (Bancario).</li>
+            <li><strong>Cotización Triple:</strong> Referencia Oficial (BNA), MEP (Bancario) y Blue (Mercado Libre/Marketplace).</li>
             <li><strong>Cálculo Modular:</strong> Te mostramos cuánto suma cada pieza por separado.</li>
             <li><strong>Actualización:</strong> Los valores se consultan en tiempo real vía API.</li>
         </ul>
@@ -242,26 +245,33 @@
         document.getElementById('result-card').style.display = 'none';
 
         try {
-            const [resBlue, resMep] = await Promise.all([
+            // Consultamos los TRES dólares en paralelo para mayor velocidad
+            const [resBlue, resMep, resOficial] = await Promise.all([
                 fetch('https://dolarapi.com/v1/dolares/blue'),
-                fetch('https://dolarapi.com/v1/dolares/bolsa')
+                fetch('https://dolarapi.com/v1/dolares/bolsa'),
+                fetch('https://dolarapi.com/v1/dolares/oficial')
             ]);
             
             const dataBlue = await resBlue.json();
             const dataMep = await resMep.json();
+            const dataOficial = await resOficial.json();
 
             let blue = dataBlue.compra;
             let mep = dataMep.compra;
+            let oficial = dataOficial.compra;
+            
+            // Calculamos el precio total en Pesos basado en el Dólar Blue (referencia de hardware usado)
             let totalARS = totalUSD * blue;
 
             let fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
             
             document.getElementById('badge-blue').innerText = "Blue: " + fmt.format(blue);
             document.getElementById('badge-mep').innerText = "MEP: " + fmt.format(mep);
+            document.getElementById('badge-oficial').innerText = "Oficial: " + fmt.format(oficial);
             document.getElementById('price-ars').innerText = fmt.format(totalARS);
             document.getElementById('price-usd').innerText = "Aprox. USD $" + Math.round(totalUSD);
 
-            // Generar Desglose Dinámico
+            // Generar Desglose Dinámico basado en Blue
             let breakdownHtml = '';
             
             if(cpu > 0) breakdownHtml += `<div class="breakdown-row"><span>Procesador</span><span>${fmt.format(cpu * condition * blue)}</span></div>`;
